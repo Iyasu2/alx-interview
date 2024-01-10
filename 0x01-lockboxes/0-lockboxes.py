@@ -1,5 +1,13 @@
 #!/usr/bin/python3
+'''
+this module does something
+'''
+
+
 def canUnlockAll(boxes):
+    '''
+    this function also does something
+    '''
     num_boxes = len(boxes)
     unlocked = [False] * num_boxes
     unlocked[0] = True
