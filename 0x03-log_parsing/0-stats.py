@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+'''
+a module
+'''
 import sys
 import signal
 import re
@@ -11,13 +14,20 @@ line_count = 0
 # Define the format of the log line
 log_format = re.compile(r'(\S+) - \[(.+)\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)')
 
+
 def print_stats():
+    '''
+    a function
+    '''
     print("Total file size: File size: {}".format(total_size))
     for code in sorted(status_codes.keys()):
         if status_codes[code] > 0:
             print("{}: {}".format(code, status_codes[code]))
 
 def handle_sigint(sig, frame):
+    '''
+    a function
+    '''
     print_stats()
     sys.exit(0)
 
