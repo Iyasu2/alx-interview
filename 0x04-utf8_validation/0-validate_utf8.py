@@ -1,5 +1,13 @@
 #!/usr/bin/python3
+'''
+this is a module
+'''
+
+
 def validUTF8(data):
+    '''
+    this is a function
+    '''
     count = 0
     for num in data:
         if count == 0:
