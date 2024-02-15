@@ -1,5 +1,5 @@
 #!/usr/bin/node
-const request = require('request');
+const rp = require('request-promise');
 
 // Get the Movie ID from the command-line arguments
 const movieId = process.argv[2];
@@ -8,17 +8,13 @@ const movieId = process.argv[2];
 const url = `https://swapi.dev/api/films/${movieId}/`;
 
 // Make the API request
-request(url, (error, response, body) => {
-  if (!error && response.statusCode === 200) {
-    const film = JSON.parse(body);
+rp({ uri: url, json: true })
+  .then(film => {
     const characterUrls = film.characters;
-    characterUrls.forEach((url) => {
-      request(url, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-          const character = JSON.parse(body);
-          console.log(character.name);
-        }
-      });
-    });
-  }
-});
+    const characterPromises = characterUrls.map(url => rp({ uri: url, json: true }));
+    return Promise.all(characterPromises);
+  })
+  .then(characters => {
+    characters.forEach(character => console.log(character.name));
+  })
+  .catch(error => console.error(`Error: ${error}`));
