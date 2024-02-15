@@ -1,20 +1,28 @@
 #!/usr/bin/node
-const rp = require('request-promise');
+const util = require('util');
+const request = util.promisify(require('request'));
+const filmID = process.argv[2];
 
-// Get the Movie ID from the command-line arguments
-const movieId = process.argv[2];
+async function starwarsCharacters (filmId) {
+  const endpoint = 'https://swapi-api.hbtn.io/api/films/' + filmId;
+  try {
+    const response = await request(endpoint);
+    const filmData = JSON.parse(response.body);
+    const characters = filmData.characters;
 
-// Define the URL for the API request
-const url = `https://swapi.dev/api/films/${movieId}/`;
+    for (let i = 0; i < characters.length; i++) {
+      const urlCharacter = characters[i];
+      try {
+        const characterResponse = await request(urlCharacter);
+        const character = JSON.parse(characterResponse.body);
+        console.log(character.name);
+      } catch (characterError) {
+        console.error(`Error fetching character: ${characterError.message}`);
+      }
+    }
+  } catch (error) {
+    console.error(`Error fetching film data: ${error.message}`);
+  }
+}
 
-// Make the API request
-rp({ uri: url, json: true })
-  .then(film => {
-    const characterUrls = film.characters;
-    const characterPromises = characterUrls.map(url => rp({ uri: url, json: true }));
-    return Promise.all(characterPromises);
-  })
-  .then(characters => {
-    characters.forEach(character => console.log(character.name));
-  })
-  .catch(error => console.error(`Error: ${error}`));
+starwarsCharacters(filmID);
