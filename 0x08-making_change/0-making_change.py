@@ -8,18 +8,22 @@ def makeChange(coins, total):
     '''
     Initialize a table to store the minimum number of coins for each amount
     '''
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0
+    if total <= 0:
+        return 0
 
-    # Iterate through each coin value
-    for coin in coins:
-        # Update the minimum number of coins needed for each amount
-        for i in range(coin, total + 1):
-            dp[i] = min(dp[i], dp[i - coin] + 1)
+    remaining_amount = total
+    coin_count = 0
+    coin_index = 0
+    sorted_coins = sorted(coins, reverse=True)
+    num_coins = len(coins)
 
-    # If the total amount cannot be met by any number of coins, return -1
-    if dp[total] == float('inf'):
-        return -1
+    while remaining_amount > 0:
+        if coin_index >= num_coins:
+            return -1
+        if remaining_amount - sorted_coins[coin_index] >= 0:
+            remaining_amount -= sorted_coins[coin_index]
+            coin_count += 1
+        else:
+            coin_index += 1
 
-    # Return the fewest number of coins needed to meet the total amount
-    return dp[total]
+    return coin_count
